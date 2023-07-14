@@ -5,8 +5,14 @@
 
  const app = express();
  
-// routes
+//*  middleware -- called so because it sits between the request and the response
+// it can modify the incoming request data
+ app.use(express.json());  // the data from the body is added to the request object
 
+
+
+ // routes
+ 
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`, 'utf-8'));
 
 app.get('/api/v1/tours', (req, res) => {
@@ -17,6 +23,19 @@ app.get('/api/v1/tours', (req, res) => {
     })
 });
 
+app.post('/api/v1/tours', (req, res) => { 
+    const id = tours[tours.length - 1].id + 1; 
+     const newTour = Object.assign({id: id}, req.body);
+      tours.push(newTour);
+      fs.writeFile(`${__dirname}/dev-data/data/tours-simple.json`, JSON.stringify(tours), err => {
+        if(err) throw err;
+        res.status(201).json({ 
+            status: 'success',
+            data: { tour: newTour }
+        });
+      });
+    console.log(req.body);
+});
 
  // create server 
  const port = process.env.port || 8000;
