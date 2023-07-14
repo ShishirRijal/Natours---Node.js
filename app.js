@@ -21,8 +21,6 @@ app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 
 
- //* SERVER 
- const port = process.env.port || 8000;
- app.listen(port, (req, res) => {
-        console.log(`Server is running on port ${port}`);
- })
+
+
+module.exports = app;
