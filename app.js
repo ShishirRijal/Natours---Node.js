@@ -1,5 +1,6 @@
- const express = require('express');
- const fs = require('fs');
+const express = require('express');
+const fs = require('fs');
+const morgan = require('morgan');
 
 
 
@@ -7,8 +8,8 @@
  
 //*  MIDDLEWARES -- called so because it sits between the request and the response
 // it can modify the incoming request data
- app.use(express.json());  // the data from the body is added to the request object
-
+app.use(express.json());  // the data from the body is added to the request object
+app.use(morgan('dev')); //  morgan is a logging middleware that logs the request data to the console
 
  // routes
  
