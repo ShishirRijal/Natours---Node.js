@@ -29,8 +29,8 @@ app.post('/api/v1/tours', (req, res) => {
       tours.push(newTour);
       fs.writeFile(`${__dirname}/dev-data/data/tours-simple.json`, JSON.stringify(tours), err => {
         if(err) throw err;
-        res.status(201).json({ 
-            status: 'success',
+        res.status(201).json({   // 201 means created
+            status: 'success', 
             data: { tour: newTour }
         });
       });
@@ -67,6 +67,22 @@ app.patch('/api/v1/tours/:id', (req, res) => {
         data: { tour: '<Updated tour here...>' } // dummy data for now
      });
 });
+
+app.delete('/api/v1/tours/:id', (req, res) => {
+    const id = req.params.id * 1; // convert id from string to int
+    const tour = tours.find((tour) => tour.id === id);
+    if(!tour) {
+        return res.status(404).json({
+            status: 'fail',
+            message: 'Invalid ID' 
+        })
+    }
+    // now add code to delete the tour
+    res.status(204).json({ // 204 means no content
+        status: 'success',
+        data: null   // null because we are deleting the data
+     });
+ });
 
  // create server 
  const port = process.env.port || 8000;
