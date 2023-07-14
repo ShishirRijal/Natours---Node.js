@@ -5,16 +5,17 @@
 
  const app = express();
  
-//*  middleware -- called so because it sits between the request and the response
+//*  MIDDLEWARES -- called so because it sits between the request and the response
 // it can modify the incoming request data
  app.use(express.json());  // the data from the body is added to the request object
-
 
 
  // routes
  
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`, 'utf-8'));
 
+
+// * ROUTE HANDLERS
 const getAllTour =  (req, res) => {
     res.status(200).json({
         "status": "success", 
@@ -23,7 +24,7 @@ const getAllTour =  (req, res) => {
     })
 }
 
-const addNewTour = (req, res) => { 
+const createTour = (req, res) => { 
     const id = tours[tours.length - 1].id + 1; 
      const newTour = Object.assign({id: id}, req.body);
       tours.push(newTour);
@@ -83,14 +84,19 @@ const deleteTour =  (req, res) => {
      });
  }
 
-app.get('/api/v1/tours',getAllTour);
-app.post('/api/v1/tours', addNewTour);
-app.get('/api/v1/tours/:id', getTour)
-app.patch('/api/v1/tours/:id', updateTour);
-app.delete('/api/v1/tours/:id', deleteTour);
+
+ // * ROUTES
+// app.get('/api/v1/tours',getAllTour);
+// app.post('/api/v1/tours', createTour);
+// app.get('/api/v1/tours/:id', getTour)
+// app.patch('/api/v1/tours/:id', updateTour);
+// app.delete('/api/v1/tours/:id', deleteTour);
+
+app.route('/api/v1/tours').get(getAllTour).post(createTour);
+app.route('/api/v1/tours/:id').get(getTour).patch(updateTour).delete(deleteTour);
 
 
- // create server 
+ // SERVER 
  const port = process.env.port || 8000;
  app.listen(port, (req, res) => {
         console.log(`Server is running on port ${port}`);
