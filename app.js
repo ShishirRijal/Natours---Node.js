@@ -15,15 +15,15 @@
  
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`, 'utf-8'));
 
-app.get('/api/v1/tours', (req, res) => {
+const getAllTour =  (req, res) => {
     res.status(200).json({
         "status": "success", 
         "results": tours.length,
         "data": { tours }
     })
-});
+}
 
-app.post('/api/v1/tours', (req, res) => { 
+const addNewTour = (req, res) => { 
     const id = tours[tours.length - 1].id + 1; 
      const newTour = Object.assign({id: id}, req.body);
       tours.push(newTour);
@@ -35,9 +35,8 @@ app.post('/api/v1/tours', (req, res) => {
         });
       });
     console.log(req.body);
-});
-
-app.get('/api/v1/tours/:id', (req, res) => {
+}
+const getTour =  (req, res) => {
     const id = req.params.id * 1; // convert id from string to number
     console.log(typeof(id));
     const tour  = tours.find((tour) => tour.id === id);
@@ -51,9 +50,9 @@ app.get('/api/v1/tours/:id', (req, res) => {
         status: 'success',
         data: { tour } 
     });
-})
+}
 
-app.patch('/api/v1/tours/:id', (req, res) => { 
+const updateTour =  (req, res) => { 
     const id = req.params.id * 1; // convert id from string to int
     const tour = tours.find((tour) => tour.id === id);
     if(!tour) {
@@ -66,9 +65,9 @@ app.patch('/api/v1/tours/:id', (req, res) => {
         status: 'success',
         data: { tour: '<Updated tour here...>' } // dummy data for now
      });
-});
+}
 
-app.delete('/api/v1/tours/:id', (req, res) => {
+const deleteTour =  (req, res) => {
     const id = req.params.id * 1; // convert id from string to int
     const tour = tours.find((tour) => tour.id === id);
     if(!tour) {
@@ -82,7 +81,14 @@ app.delete('/api/v1/tours/:id', (req, res) => {
         status: 'success',
         data: null   // null because we are deleting the data
      });
- });
+ }
+
+app.get('/api/v1/tours',getAllTour);
+app.post('/api/v1/tours', addNewTour);
+app.get('/api/v1/tours/:id', getTour)
+app.patch('/api/v1/tours/:id', updateTour);
+app.delete('/api/v1/tours/:id', deleteTour);
+
 
  // create server 
  const port = process.env.port || 8000;
