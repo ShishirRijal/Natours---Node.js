@@ -1,42 +1,17 @@
 const express = require('express');
-
-const getAllUsers = (req, res) => { 
-    res.status(500).json({ // 500 means internal server error
-        status: 'error',
-        message: 'This route is not yet defined'
-       });
-}
-const createUser = (req, res) => { 
-    res.status(500).json({  
-        status: 'error',
-        message: 'This route is not yet defined'
-       });
-   }
-const deleteUser = (req, res) => { 
-     res.status(500).json({  
-        status: 'error',
-        message: 'This route is not yet defined'
-           });
-    }
-const updateUser = (req, res) => { 
-    res.status(500).json({  
-        status: 'error',
-        message: 'This route is not yet defined'
-        });
-    }
-const getUser = (req, res) => { 
-        res.status(500).json({  
-            status: 'error',
-            message: 'This route is not yet defined'
-        });
-    }
-       
+const userController = require(`${__dirname}/../controllers/user-controller.js`);
    
-
 
 const router  = express.Router();
 
-router.route('/').get(getAllUsers).post(createUser);
-router.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
+router.route('/')
+    .get(userController.getAllUsers)
+    .post(userController.createUser);
+
+router.route('/:id')
+    .get(userController.getUser)
+    .patch(userController.updateUser)
+    .delete(userController.deleteUser);
+
 
 module.exports = router;
