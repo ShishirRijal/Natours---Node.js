@@ -1,5 +1,5 @@
 const fs = require('fs');
-const Tour = require(`${__dirname}/models/tourModel`);
+const Tour = require(`${__dirname}/../models/tourModel`);
  
 // const tours = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`, 'utf-8'));
 
@@ -13,18 +13,20 @@ exports.getAllTour =  (req, res) => {
     })
 } 
 
-exports.createTour = (req, res) => { 
-    const id = tours[tours.length - 1].id + 1; 
-     const newTour = Object.assign({id: id}, req.body);
-      tours.push(newTour);
-      fs.writeFile(`${__dirname}/../dev-data/data/tours-simple.json`, JSON.stringify(tours), err => {
-        if(err) throw err;
-        res.status(201).json({   // 201 means created
-            status: 'success', 
-            data: { tour: newTour }
+exports.createTour = async  (req, res) => { 
+    try {
+        const newTour =  await Tour.create(req.body); 
+        res.status(201).json({ 
+            status: 'success',
+            data: { tour: newTour } 
         });
-      });
-    console.log(req.body);
+    } 
+    catch (err) {
+        res.status(400).json({ // 400: Bad Request
+            status: 'failure', 
+            data: err
+        })
+    }
 }
 exports.getTour =  (req, res) => {
     const id = req.params.id * 1; // convert id from string to number
