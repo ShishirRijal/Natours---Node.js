@@ -10,6 +10,9 @@ router.route('/top-5-cheap').get(tourController.aliasTopTours, tourController.ge
 // pipeline for the aggregation
 router.route('/tour-stats').get(tourController.getTourStats);
 
+// pipeline for the aggregation -- monthly plan
+router.route('/monthly-plan/:year').get(tourController.getMonthlyPlan);
+
 
 router.route('/')
     .get(tourController.getAllTour)

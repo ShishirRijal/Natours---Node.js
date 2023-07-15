@@ -129,5 +129,55 @@ exports.deleteTour =  async (req, res) => {
             message: err
         })
     }
+ }
 
+
+ exports.getMonthlyPlan = async (req, res) => {
+    try{ 
+        const year = req.params.year * 1;  
+        const plan = await Tour.aggregate([
+            {
+                $unwind: '$startDates' // deconstructs an array field from the input documents to output a document for each element
+            },
+            {
+                $match: { 
+                    startDates : { 
+                        $gte: new Date(`${year}-01-01`), 
+                        $lte: new Date(`${year}-12-31`)
+                    },
+                }
+            }, 
+            {
+                $group: {
+                    _id: { $month: '$startDates'}, // group by month
+                    numTourStarts: { $sum: 1},
+                    tours: { $push: '$name'} // push the name of the tours into an array
+                },
+            }, {
+                $addFields: { month: '$_id'} // add a new field called month
+            }, 
+            {
+                $project: {
+                    _id: 0 // hide the id field
+                }
+            }, 
+            {
+                $limit: 6,
+            },
+            {
+                $sort: { numTourStarts: -1} // sort by the number of tour starts
+            }
+        ]);
+
+        res.status(200).json({
+            status: 'success',
+            data: { plan }
+        });
+    }
+    catch(err) {
+        res.status(404).json({
+            status: 'failure',
+            message: err
+        })
+    }
  }
