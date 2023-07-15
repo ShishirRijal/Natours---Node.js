@@ -5,7 +5,7 @@ const tourController = require(`${__dirname}/../controllers/tour-controller.js`)
 const router = express.Router();
 router.route('/')
     .get(tourController.getAllTour)
-    .post(tourController.checkBody, tourController.createTour); // chaining the middleware 
+    .post(tourController.createTour); // chaining the middleware 
     // it checks the condition checkBody, if true executed the createTour 
     
 router.route('/:id')

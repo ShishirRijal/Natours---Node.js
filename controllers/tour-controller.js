@@ -1,18 +1,10 @@
 const fs = require('fs');
+const Tour = require(`${__dirname}/models/tourModel`);
+ 
+// const tours = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`, 'utf-8'));
 
-const tours = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`, 'utf-8'));
 
 
-exports.checkBody = (req, res, next ) => {
-    if(!req.body.name || !req.body.price) 
-     {
-        res.status(400).json({
-            status: 'fail', 
-            message: 'price or name missing'
-        });
-     }
-     next();
-}
 exports.getAllTour =  (req, res) => {
     res.status(200).json({
         "status": "success", 
