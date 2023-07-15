@@ -65,6 +65,14 @@ tourSchema.virtual('durationWeeks').get(function() {
        return this.duration / 7;
 })
 
+//* MONGOOSE MIDDLEWARE 
+// There are 4 types of middleware in mongoose: document, query, aggregate, and model middleware
+
+// 1) DOCUMENT MIDDLEWARE: runs before .save() and .create() but not .insertMany()
+tourSchema.pre('save', function(next) {
+       console.log(this); // this refers to the current document
+});
+
 const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;
