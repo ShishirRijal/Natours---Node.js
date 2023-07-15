@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
+
 
 const tourSchema = new mongoose.Schema({
        name: {
@@ -6,6 +8,7 @@ const tourSchema = new mongoose.Schema({
               required:  [true, 'A tour must have a name'],
               unique: [true, 'A tour already exists by this name']
        }, 
+       slug: String,
        duration: {
               type: Number, 
               required: [true, 'A tour must have a duration']
@@ -63,15 +66,24 @@ const tourSchema = new mongoose.Schema({
 // Virtual Properties: properties that are not stored in the database but are computed using some other value
 tourSchema.virtual('durationWeeks').get(function() {
        return this.duration / 7;
-})
+}); 
 
-//* MONGOOSE MIDDLEWARE 
+
+
+//* MONGOOSE MI  DDLEWARE 
 // There are 4 types of middleware in mongoose: document, query, aggregate, and model middleware
 
 // 1) DOCUMENT MIDDLEWARE: runs before .save() and .create() but not .insertMany()
 tourSchema.pre('save', function(next) {
-       console.log(this); // this refers to the current document
+       this.slug = slugify(this.name, { lower: true });
+       next();
 });
+
+// tourSchema.post('save', function(doc, next) {
+//        console.log(doc);
+//        next();
+// })
+
 
 const Tour = mongoose.model('Tour', tourSchema);
 
