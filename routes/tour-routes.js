@@ -7,6 +7,10 @@ const router = express.Router();
 // building a special route for the most popular searches 
 router.route('/top-5-cheap').get(tourController.aliasTopTours, tourController.getAllTour);
 
+// pipeline for the aggregation
+router.route('/tour-stats').get(tourController.getTourStats);
+
+
 router.route('/')
     .get(tourController.getAllTour)
     .post(tourController.createTour); // chaining the middleware 
