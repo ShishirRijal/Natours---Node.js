@@ -55,7 +55,15 @@ const tourSchema = new mongoose.Schema({
               select: false // this field will not be displayed when a tour is fetched
        },
        startDates: [Date]
+}, {
+       toJSON: { virtuals: true}, // when data is outputted as JSON, include the virtual properties
+       toObject: { virtuals: true} // when data is outputted as an object, include the virtual properties
 });
+
+// Virtual Properties: properties that are not stored in the database but are computed using some other value
+tourSchema.virtual('durationWeeks').get(function() {
+       return this.duration / 7;
+})
 
 const Tour = mongoose.model('Tour', tourSchema);
 
