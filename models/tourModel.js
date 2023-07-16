@@ -57,7 +57,11 @@ const tourSchema = new mongoose.Schema({
               default: Date.now(), 
               select: false // this field will not be displayed when a tour is fetched
        },
-       startDates: [Date]
+       startDates: [Date], 
+       secretTour: {
+              type: Boolean,
+              default: false
+       },
 }, {
        toJSON: { virtuals: true}, // when data is outputted as JSON, include the virtual properties
        toObject: { virtuals: true} // when data is outputted as an object, include the virtual properties
@@ -74,8 +78,9 @@ tourSchema.virtual('durationWeeks').get(function() {
 // There are 4 types of middleware in mongoose: document, query, aggregate, and model middleware
 
 // 1) DOCUMENT MIDDLEWARE: runs before .save() and .create() but not .insertMany()
+// this refers to the current document
 tourSchema.pre('save', function(next) {
-       this.slug = slugify(this.name, { lower: true });
+       this.slug = slugify(this.name, { lower: true }); 
        next();
 });
 
@@ -84,6 +89,22 @@ tourSchema.pre('save', function(next) {
 //        next();
 // })
 
+// 2) QUERY MIDDLEWARE: runs before .find() and .findOne()
+// this refers to the current query
+tourSchema.pre(/^find/, function(next) {
+
+       this.find({secretTour: {$ne: true }});
+       this.start = Date.now();
+       next();
+});
+
+// runs after the query has executed
+tourSchema.post(/^find/, function(docs, next) { // docs is the result of the query
+       console.log(`Query took ${Date.now() - this.start} milliseconds`);
+       console.log(docs);
+
+       next();
+});
 
 const Tour = mongoose.model('Tour', tourSchema);
 

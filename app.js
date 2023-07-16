@@ -1,10 +1,10 @@
 const express = require('express');
 const fs = require('fs');
-const morgan = require('morgan');
+const morgan = require('morgan'); 
 
 // import routes
-const tourRouter = require(`${__dirname}/routes/tour-routes.js`);
-const userRouter = require(`${__dirname}/routes/user-routes.js`);
+const tourRouter = require(`${__dirname}/routes/tour-routes.js`); 
+const userRouter = require(`${__dirname}/routes/user-routes.js`); 
 
  const app = express(); 
 
