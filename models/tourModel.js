@@ -106,6 +106,18 @@ tourSchema.post(/^find/, function(docs, next) { // docs is the result of the que
        next();
 });
 
+// 3) AGGREGATION MIDDLEWARE: runs before .aggregate()
+// this refers to the current aggregation object
+tourSchema.pre('aggregate', function (next) {
+       this.pipeline().unshift({
+              $match : { secretTour: { $ne: true}} // avoid secret tours from being included in the aggregation
+       });
+       next(); 
+}); 
+
+
+
+
 const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;
