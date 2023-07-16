@@ -11,7 +11,17 @@ exports.getAllUsers = (req, res) => {
        });
 }
 exports.createUser = catchAsync(async (req, res, next) => { 
-    const user = await User.create(req.body);
+    // ! Serious security flaw: anyone can create an admin user by specifying admin: true in the request body
+    // const user = await User.create(req.body); 
+    // * To fix this, we will create a new object with only the fields we want
+    const newUser = await User.create({
+        name: req.body.name,
+        email: req.body.email,
+        photo: req.body.photo,
+        password: req.body.password,
+        passwordConfirm: req.body.passwordConfirm
+    });
+
     res.status(201).json({ // 201 means created
         status: 'success',
         data: { user }
