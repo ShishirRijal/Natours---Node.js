@@ -3,6 +3,7 @@ const fs = require('fs');
 const Tour = require(`${__dirname}/../models/tourModel`);
 const APIFeatures = require(`${__dirname}/../utils/api-features.js`);
 const catchAsync = require(`${__dirname}/../utils/catch-async.js`);
+const AppError = require(`${__dirname}/../utils/app-error.js`);
 // const tours = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`, 'utf-8'));
 
 
@@ -41,11 +42,16 @@ exports.createTour = catchAsync(async  (req, res, next) => {
 
 
 exports.getTour = catchAsync(async (req, res, next) => {
-        const tour = await Tour.findById(req.params.id); // req.params.id is the id in the url
-        res.status(200).json({ 
-        status: 'success',
-        data: { tour } 
-        });
+    const tour = await Tour.findById(req.params.id); // req.params.id is the id in the url 
+
+    if(!tour) { 
+        return next(new AppError('No tour found with that ID', 404));
+    }
+
+    res.status(200).json({ 
+    status: 'success',
+    data: { tour } 
+    });
 });
 
 
@@ -54,6 +60,11 @@ exports.updateTour =  catchAsync(async (req, res, next) => {
             new: true, 
             runValidators: true
         });
+
+        if(!tour) { 
+            return next(new AppError('No tour found with that ID', 404));
+        }
+
         res.status(200).json({
             status: 'success',
             data: { tour }  
@@ -61,11 +72,16 @@ exports.updateTour =  catchAsync(async (req, res, next) => {
 });
 
 exports.deleteTour =  catchAsync(async (req, res) => {
-        await Tour.findByIdAndDelete(req.params.id);
-        res.status(204).json({ // 204: No Content
-            status: 'success',
-            data: null
-        })
+    const tour =  await Tour.findByIdAndDelete(req.params.id);
+
+    if(!tour) { 
+        return next(new AppError('No tour found with that ID', 404));
+    }
+
+    res.status(204).json({ // 204: No Content
+        status: 'success',
+        data: null
+    })
  });
 
  exports.getTourStats = catchAsync(async (req, res, next) =>{
