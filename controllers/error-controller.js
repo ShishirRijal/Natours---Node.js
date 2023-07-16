@@ -1,7 +1,16 @@
+const AppError = require('../utils/app-error');
+
+const handleCastErrorDB = err => {
+    const message = `Invalid ${err.path}: ${err.value}.`; 
+    console.log(message);
+    return new AppError(message, 400); // 400 = bad request
+}
+
 
 const sendErrorDev = (err, res) => {
     res.status(err.statusCode).json({
         status: err.status, 
+        error: err, 
         message: err.message,
         stack: err.stack,
      });
@@ -9,7 +18,7 @@ const sendErrorDev = (err, res) => {
 
 const sendErrorProd = (err, res) => { 
     // Operational, trusted error: send message to client
-    if(error.isOperational) {
+    if(err.isOperational) { 
         res.status(err.statusCode).json({
             status: err.status,
             message: err.message, 
@@ -18,7 +27,7 @@ const sendErrorProd = (err, res) => {
     // Programming or other unknown error: don't leak error details
     else {
         // 1) Log error -- for devs so we can see what's going on
-        console.error('ERROR 🔥: ', err);
+        console.error('ERROR 🔥: ', err); 
 
         // 2) Send generic message -- for users
         res.status(500).json({
@@ -40,10 +49,10 @@ module.exports =  (err, req, res, next) => {
     }
     // in production mode, we want to show a more generic error message
     else if(process.env.NODE_ENV === 'production') {
-        sendErrorProd(err, res);
+        let error = {...err}; 
+        if(err.name === 'CastError')  error = handleCastErrorDB(error);
+        sendErrorProd(error, res);
     }
-
-    
 }
 
 
