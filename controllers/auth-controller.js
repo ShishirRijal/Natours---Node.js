@@ -1,6 +1,7 @@
 const catchAsync = require('../utils/catch-async');
 const User = require('../models/userModel');
 const jwt = require('jsonwebtoken');
+const AppError = require('../utils/app-error');
 
 exports.signup = catchAsync(async (req, res, next) => { 
     // ! Serious security flaw: anyone can create an admin user by specifying admin: true in the request body
@@ -24,4 +25,21 @@ exports.signup = catchAsync(async (req, res, next) => {
         data: { user: newUser }
     });
 
+});
+
+
+exports.login = catchAsync(async (req, res, next) => {
+    const { email, password } = req.body; // destructuring
+    //1. check if the email and password exists
+    if(!email || !password) {
+        return next(new AppError('Please provide email and password', 400));
+    } 
+    //2. check if the user exists && password is correct
+    const user = User.find({ email: email });
+    //3. if everything is ok, send token to client
+    const token = '';
+    res.status(200).json({
+        status: 'success',
+        token, 
+    });
 });
