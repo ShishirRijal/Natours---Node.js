@@ -16,6 +16,7 @@ exports.aliasTopTours = (req, res, next) => {
     next();
 }
 
+
 exports.getAllTour = catchAsync(async  (req, res, next) => {
   
     // EXECUTE QUERY 
