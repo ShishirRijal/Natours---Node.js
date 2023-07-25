@@ -1,9 +1,3 @@
-const express = require('express');
-const catchAsync = require('../utils/catch-async');
-const User = require('../models/userModel');
-const jwt = require('jsonwebtoken');
-
- 
 exports.getAllUsers = (req, res) => { 
     res.status(500).json({ // 500 means internal server error
         status: 'error',
