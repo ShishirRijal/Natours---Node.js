@@ -16,7 +16,12 @@ const userRouter = require(`${__dirname}/routes/user-routes.js`);
 app.use(express.json());  // the data from the body is added to the request object
 app.use(morgan('dev')); //  morgan is a logging middleware that logs the request data to the console
 app.use(express.static(`${__dirname}/public`)); // access the static files
-    
+   
+
+app.use((req, res, next) => {
+    console.log(req.headers); 
+    next(); 
+});
 // * ROUTES
 // mount the router 
 
