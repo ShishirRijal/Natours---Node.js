@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
@@ -44,6 +45,8 @@ const userSchema = new mongoose.Schema({
         }
     } , 
     passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
 });
 
 //* Document middleware
@@ -71,6 +74,15 @@ userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
     // False means NOT changed
     return false;
 }
+
+userSchema.methods.createPasswordResetToken = function() {
+    const resetToken = crypto.randomBytes(32).toString('hex'); // random string
+   // store encrypted token in database
+    this.passwordResetToken =  crypto.createHash('sha256').update(resetToken).digest('hex'); // digest is the output format
+    this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes 
+    return resetToken; // unencrypted token sent to user through email
+}
+ 
 
 const User = mongoose.model('User', userSchema);
 
