@@ -20,7 +20,7 @@ app.use(express.static(`${__dirname}/public`)); // access the static files
 
 app.use((req, res, next) => {
     console.log(req.headers); 
-    next(); 
+    next();  
 });
 // * ROUTES
 // mount the router 
