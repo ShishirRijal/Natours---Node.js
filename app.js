@@ -4,6 +4,9 @@ const morgan = require('morgan');
 const AppError = require(`${__dirname}/utils/app-error.js`);
 const globalErrorHandler = require(`${__dirname}/controllers/error-controller.js`);
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+
+
 // import routes
 const tourRouter = require(`${__dirname}/routes/tour-routes.js`); 
 const userRouter = require(`${__dirname}/routes/user-routes.js`); 
@@ -24,7 +27,11 @@ const limiter = rateLimit({
 });
 
 app.use('/api', limiter); // apply the limiter middleware to all the routes that start with /api 
-app.use(express.json());  // the data from the body is added to the request object
+app.use(helmet()); // set security HTTP headers
+// Body parser, reading data from the body into req.body
+app.use(express.json({
+    limit: '10kb' // limit the size of the request body to 10kb
+}));  // the data from the body is added to the request object
 app.use(morgan('dev')); //  morgan is a logging middleware that logs the request data to the console
 app.use(express.static(`${__dirname}/public`)); // access the static files
    
