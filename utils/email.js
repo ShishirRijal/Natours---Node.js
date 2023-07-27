@@ -17,7 +17,7 @@ const sendEmail = async options => {
             rejectUnAuthorized:true
         }
         // Activate in gmail "less secure app" option
-    });  
+    });
     // 2. Define the email options
     const mailOptions = {
         from: 'Shishir Rijal <hello@natours.com>',   
