@@ -5,6 +5,7 @@ const AppError = require('../utils/app-error');
 const bcrypt = require('bcrypt');
 const { promisify } = require('util');
 const sendEmail = require('../utils/email');
+const crypto = require('crypto');
 
 const signToken = (id) => {
     return jwt.sign({ id: id }, process.env.JWT_SECRET, {
@@ -130,5 +131,28 @@ exports.forgotPassword = catchAsync(async(req, res, next) => {
 
 
 exports.resetPassword = catchAsync(async(req, res, next) => {
-    //
+    // 1. Get user based on the token
+        // in database, we have the encrypted token, so we need to encrypt the token from the request body and compare them
+    const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+    const user = User.findOne({passwordResetToken: hashedToken , passwordResetExpires: { $gt: Date.now() }});
+
+    // 2. If token has not expired, and there is user, set the new password
+    if(!user) {
+        return next(new AppError('Token is invalid or has expired', 400));
+    }
+    user.password = req.body.password;
+    user.passwordConfirm = req.body.passwordConfirm;
+    user.passwordResetToken = undefined; // delete the token
+    user.passwordResetExpires = undefined; 
+    await user.save(); // save the document with validation
+
+    // 3. Update changedPasswordAt property for the user
+        // this is done in the pre save middleware in userModel.js
+    // 4. Log the user in, send JWT
+    const token = signToken(user._id);
+    res.status(200).json({
+        status: 'success',
+        token,
+    });  
+
 });

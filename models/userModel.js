@@ -61,6 +61,17 @@ userSchema.pre('save', async function(next) {
         this.passwordConfirm = undefined;
 })
 
+
+userSchema.pre('save', function(next) {
+    if(!this.isModified('password') || this.isNew) return next();
+    // -1000 is to make sure the token is created after the password is changed
+    // because sometimes the token is created before the password is changed
+    // and the user will not be able to log in because the token is created after the password is changed
+    this.passwordChangedAt = Date.now() - 1000;
+    next();
+})
+
+
 //* Instance method: available on all documents of a certain collection
 userSchema.methods.correctPassword = async function(candidatePassword, userPassword) {
     return await bcrypt.compare(candidatePassword, userPassword);
