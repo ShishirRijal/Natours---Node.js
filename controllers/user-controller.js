@@ -11,6 +11,10 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
        "data": { users }
        });
 });
+
+
+
+
 exports.createUser = (req, res) => { 
     res.status(500).json({ // 500 means internal server error
         status: 'error',
