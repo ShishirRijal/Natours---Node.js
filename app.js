@@ -7,6 +7,7 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xssClean = require('xss-clean');
+const hpp = require('hpp');
 
 
 // import routes
@@ -39,6 +40,11 @@ app.use(express.json({
 app.use(mongoSanitize());
 // Data sanitization against XSS
 app.use(xssClean());
+// Prevent parameter pollution
+app.use(hpp({
+    // whitelist allows duplicate parameters in the query string
+    whitelist: ['duration', 'ratingsQuantity', 'ratingsAverage', 'maxGroupSize', 'difficulty', 'price']
+}));
 
 app.use(morgan('dev')); //  morgan is a logging middleware that logs the request data to the console
 app.use(express.static(`${__dirname}/public`)); // access the static files
