@@ -47,6 +47,11 @@ const userSchema = new mongoose.Schema({
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
+    active: {
+        type: Boolean,
+        default: true, 
+        select: false,
+    }
 });
 
 //* Document middleware
@@ -71,6 +76,13 @@ userSchema.pre('save', function(next) {
     next();
 })
 
+
+//* Query middleware
+// this points to the current query
+userSchema.pre(/^find/, function(next) {
+    this.find({active: {$ne: false}}); // this is a query object
+    next();
+});
 
 //* Instance method: available on all documents of a certain collection
 userSchema.methods.correctPassword = async function(candidatePassword, userPassword) {
