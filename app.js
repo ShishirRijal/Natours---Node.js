@@ -5,6 +5,8 @@ const AppError = require(`${__dirname}/utils/app-error.js`);
 const globalErrorHandler = require(`${__dirname}/controllers/error-controller.js`);
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xssClean = require('xss-clean');
 
 
 // import routes
@@ -32,6 +34,12 @@ app.use(helmet()); // set security HTTP headers
 app.use(express.json({
     limit: '10kb' // limit the size of the request body to 10kb
 }));  // the data from the body is added to the request object
+
+// Data sanitization against NoSQL query injection
+app.use(mongoSanitize());
+// Data sanitization against XSS
+app.use(xssClean());
+
 app.use(morgan('dev')); //  morgan is a logging middleware that logs the request data to the console
 app.use(express.static(`${__dirname}/public`)); // access the static files
    
