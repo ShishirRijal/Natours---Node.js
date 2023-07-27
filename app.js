@@ -3,7 +3,7 @@ const fs = require('fs');
 const morgan = require('morgan'); 
 const AppError = require(`${__dirname}/utils/app-error.js`);
 const globalErrorHandler = require(`${__dirname}/controllers/error-controller.js`);
-
+const rateLimit = require('express-rate-limit');
 // import routes
 const tourRouter = require(`${__dirname}/routes/tour-routes.js`); 
 const userRouter = require(`${__dirname}/routes/user-routes.js`); 
@@ -11,8 +11,19 @@ const userRouter = require(`${__dirname}/routes/user-routes.js`);
  const app = express(); 
 
  
+
+
+
 //*  MIDDLEWARES -- called so because it sits between the request and the response
 // it can modify the incoming request data
+
+const limiter = rateLimit({
+    max: 100, // max number of requests from an IP
+    windowMs: 60 * 60 * 1000, // 1 hour
+    message: 'Too many requests from this IP, please try again in an hour',
+});
+
+app.use('/api', limiter); // apply the limiter middleware to all the routes that start with /api 
 app.use(express.json());  // the data from the body is added to the request object
 app.use(morgan('dev')); //  morgan is a logging middleware that logs the request data to the console
 app.use(express.static(`${__dirname}/public`)); // access the static files
