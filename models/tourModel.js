@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 const validator = require('validator');
+const User = require('./userModel');
 
 const tourSchema = new mongoose.Schema({
        name: {
@@ -100,9 +101,10 @@ const tourSchema = new mongoose.Schema({
                      }, 
                      coordinates: [Number], // longitude, latitude
                      address: String,
-                     description: String
+                     description: String,
               }
        ],
+       guides: Array,
 }, {
        toJSON: { virtuals: true}, // when data is outputted as JSON, include the virtual properties
        toObject: { virtuals: true} // when data is outputted as an object, include the virtual properties
@@ -123,6 +125,14 @@ tourSchema.virtual('durationWeeks').get(function() {
 tourSchema.pre('save', function(next) {
        this.slug = slugify(this.name, { lower: true }); 
        next();
+});
+
+
+// Embedding guides into the tour document
+tourSchema.pre('save', async function(next) {
+       const guidesPromises = this.guides.map(async id => await User.findById(id)); // returns an array of promises 
+       this.guides = await Promise.all(guidesPromises); // wait for all the promises to be resolved
+       next(); 
 });
 
 // tourSchema.post('save', function(doc, next) {
@@ -146,6 +156,9 @@ tourSchema.post(/^find/, function(docs, next) { // docs is the result of the que
 
        next();
 });
+
+
+
 
 // 3) AGGREGATION MIDDLEWARE: runs before .aggregate()
 // this refers to the current aggregation object
