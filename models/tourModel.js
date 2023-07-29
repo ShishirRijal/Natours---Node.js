@@ -104,7 +104,15 @@ const tourSchema = new mongoose.Schema({
                      description: String,
               }
        ],
-       guides: Array,
+       // guides: Array, // embedding
+       // referencing the guides data in tour 
+       guides: [
+              {
+              type: mongoose.Schema.ObjectId,
+              ref: 'User' 
+       }
+       ],
+
 }, {
        toJSON: { virtuals: true}, // when data is outputted as JSON, include the virtual properties
        toObject: { virtuals: true} // when data is outputted as an object, include the virtual properties
