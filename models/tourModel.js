@@ -79,6 +79,30 @@ const tourSchema = new mongoose.Schema({
               type: Boolean,
               default: false
        },
+       startLocation: {
+              // GeoJSON
+              // for mongoDB to understand that this is a GeoJSON object, we need to specify the type and coordinates
+              type: {
+                     type: String,
+                     default: 'Point',
+                     enum: ['Point']
+              }, 
+              coordinates: [Number], // longitude, latitude
+              address: String,
+              description: String
+       }, 
+       locations: [
+              {
+                     type: {
+                            type: String,
+                            default: 'Point',
+                            enum: ['Point']
+                     }, 
+                     coordinates: [Number], // longitude, latitude
+                     address: String,
+                     description: String
+              }
+       ],
 }, {
        toJSON: { virtuals: true}, // when data is outputted as JSON, include the virtual properties
        toObject: { virtuals: true} // when data is outputted as an object, include the virtual properties
