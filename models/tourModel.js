@@ -147,9 +147,9 @@ tourSchema.pre('save', async function(next) {
 // populating all the tours with their guides info
 tourSchema.pre(/^find/, function(next) {
        this.populate({
-              path: 'guides',
-            
+              path: 'guides',     
        });
+       next();
 });
 // tourSchema.post('save', function(doc, next) {
 //        console.log(doc);
