@@ -13,8 +13,12 @@ const hpp = require('hpp');
 // import routes
 const tourRouter = require(`${__dirname}/routes/tour-routes.js`); 
 const userRouter = require(`${__dirname}/routes/user-routes.js`); 
+const reviewRouter = require(`${__dirname}/routes/review-routes.js`) 
 
- const app = express(); 
+
+
+ 
+const app = express(); 
 
  
 
@@ -59,6 +63,8 @@ app.use((req, res, next) => {
 
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/reviews', reviewRouter);
+
 
 
 // if we make upto here, this is an undefined route
