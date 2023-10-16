@@ -102,6 +102,7 @@ const tourSchema = new mongoose.Schema({
                      coordinates: [Number], // longitude, latitude
                      address: String,
                      description: String,
+                     day: Number, 
               }
        ],
        // guides: Array, // embedding
@@ -125,7 +126,7 @@ tourSchema.virtual('durationWeeks').get(function() {
 
 
 
-//* MONGOOSE MI  DDLEWARE 
+//* MONGOOSE MIDDLEWARE 
 // There are 4 types of middleware in mongoose: document, query, aggregate, and model middleware
 
 // 1) DOCUMENT MIDDLEWARE: runs before .save() and .create() but not .insertMany()
@@ -143,6 +144,13 @@ tourSchema.pre('save', async function(next) {
        next(); 
 });
 
+// populating all the tours with their guides info
+tourSchema.pre(/^find/, function(next) {
+       this.populate({
+              path: 'guides',
+            
+       });
+});
 // tourSchema.post('save', function(doc, next) {
 //        console.log(doc);
 //        next();
